@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
+#include <time.h>
 
 using namespace std;
+
 
 class City
 {
@@ -11,17 +13,17 @@ private:
 
 public:
 	City(string city_name, int city_population){
-		this -> set_city_name(city_name);
-		this -> set_city_population(city_population);
+		this -> SetCityName(city_name);
+		this -> SetCityPopulation(city_population);
 	}
 
-	string get_city_name(bool print=false){
+	string GetCityName(bool print=false){
 		if (print){
 			cout << this -> city_name;
 		}
 		return this -> city_name;
 	}
-	void set_city_name(string name_of_city){
+	void SetCityName(string name_of_city){
 		if (name_of_city.length()){
 			city_name = name_of_city;
 		} else {
@@ -29,7 +31,7 @@ public:
 		}
 	}
 
-	int get_city_population(bool print=false){
+	int GetCityPopulation(bool print=false){
 
 		if (print){
 			cout << city_population<< endl;
@@ -37,7 +39,7 @@ public:
 		return this -> city_population;
 	}
 
-	void set_city_population(int value){
+	void SetCityPopulation(int value){
 		if (value < 0){
 			throw invalid_argument("Value of city_population can't be \
 				                   negative");
@@ -47,11 +49,94 @@ public:
 
 };
 
+class Customer
+{
+private:
+	/*Arrays for random picking*/
+	string names[6] = {"John", "Oliver", "Mike", "Alex",
+							    "Elizabeth", "Nikole"
+			                    };
+
+    string types_of_transport[3] = {"Car", "Train", "Plane"};
+
+	string name_of_customer;
+	string type_of_transport;
+	int age_of_customer;
+	float weight;
+
+protected:
+	float RandomFloat(float a, float b) {
+	    float random = ((float) rand()) / (float) RAND_MAX;
+	    float diff = b - a;
+	    float r = random * diff;
+	    return a + r;
+	}
+public:
+	Customer(){
+
+		/*Setting random customer's name */
+
+		/*generate random num from 0 to 5*/
+		int RandIndexForName = rand() % 6;
+		string rand_name = names[RandIndexForName];
+		this -> SetNameOfCustomer(rand_name);
+
+		/*Setting random type_of_transport  that the custoemer if*/
+		/* preffered */
+
+		/*generate random num from 0 to 2*/
+		int RandIndexTypeOfTransport = rand() % 3;
+		string rand_trans_name = types_of_transport[RandIndexTypeOfTransport];
+		this -> SetNameOfTransport(rand_trans_name);
+
+		/*Setting random age of the customer*/
+
+		/* adds 50 to the random num from 0 to 25 */
+		int RandomAge = (rand() % 26) + 30;
+		this -> SetAgeOfCustomer(RandomAge);
+
+		/*Setting random weight of the product */
+		float RandomWeight = RandomFloat(500, 20000);
+		this -> SetWeight(RandomWeight);
+
+	}
+	string GetNameOfCustomer(){
+		return this -> name_of_customer;
+	}
+	void SetNameOfCustomer(string nameValue){
+		name_of_customer = nameValue;
+	}
+
+	string GetNameOfTransport(){
+		return this -> type_of_transport;
+	}
+	void SetNameOfTransport(string nameValue){
+		type_of_transport = nameValue;
+	} 
+
+	int GetAgeOfCustomer(){
+		return this -> age_of_customer;
+	}
+	void SetAgeOfCustomer(int value){
+		age_of_customer = value;
+	}
+
+	float GetWeight(){
+		return this -> weight;
+	};
+	void SetWeight(float value){
+		weight = value;
+	}
+
+};
 
 int main()
 {
-	City new_city("Polock", 30000);
-	new_city.set_city_population(30);
-	new_city.get_city_population(true);
-	new_city.get_city_name(true);
+	srand ( time(NULL) ); //initialize the random seed
+
+	Customer first_customer;
+	cout << first_customer.GetNameOfCustomer() << endl;
+	cout << first_customer.GetNameOfTransport() << endl;
+	cout << first_customer.GetAgeOfCustomer() << endl;
+	cout << first_customer.GetWeight();
 }
