@@ -1,9 +1,10 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <chrono>
+#include <thread>
 
 using namespace std;
-
 
 class City
 {
@@ -49,10 +50,12 @@ public:
 
 };
 
-class Customer
+class Order
 {
 private:
 	/*Arrays for random picking*/
+
+	/* Name of the customer */
 	string names[6] = {"John", "Oliver", "Mike", "Alex",
 							    "Elizabeth", "Nikole"
 			                    };
@@ -72,7 +75,7 @@ protected:
 	    return a + r;
 	}
 public:
-	Customer(){
+	Order(){
 
 		/*Setting random customer's name */
 
@@ -130,13 +133,42 @@ public:
 
 };
 
+
+class TrancAgency
+{
+
+private:
+	int money = 10000;
+public:
+	void AcceptOrder(Order some_order){
+    	cout << "The Order from " << some_order.GetNameOfCustomer()
+    	<<" was accepted!" << endl;
+
+    	cout << "Delivery is underway..." << endl;
+
+    	/* Sleep for 5 seconds */
+		chrono::seconds dura(5);
+    	this_thread::sleep_for(dura);
+
+    	cout << "Delivered!";
+	}
+};
+
+
+/* Code driver */
 int main()
 {
 	srand ( time(NULL) ); //initialize the random seed
 
-	Customer first_customer;
-	cout << first_customer.GetNameOfCustomer() << endl;
-	cout << first_customer.GetNameOfTransport() << endl;
-	cout << first_customer.GetAgeOfCustomer() << endl;
-	cout << first_customer.GetWeight();
+	
+	TrancAgency new_trans_agency;
+
+	bool main_loop = true;
+	/*while (main_loop) {
+		Order first_customer;
+		new_trans_agency.AcceptOrder(first_customer);
+	}*/
+
+	return 0;
+		
 }
