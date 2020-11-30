@@ -4,7 +4,7 @@
 #include <time.h>
 #include <map>
 #include <vector>
-#include <array>
+#include <cmath>
 
 
 /*Getting sleep func for different OS */
@@ -21,6 +21,7 @@ using namespace std;
 class Order
 {
 private:
+	int id;
 	/*Arrays for random picking*/
 
 	/* Name of the customer */
@@ -58,8 +59,10 @@ protected:
 	    float r = random * diff;
 	    return a + r;
 	}
+
 public:
-	Order(){
+	Order(int id){
+		this ->id = id;
 
 		/*Setting random customer's name */
 
@@ -108,6 +111,7 @@ public:
 		this -> SetRandomAward(random_award);
 
 	}
+	~Order(){};
 	string GetNameOfCustomer(){
 		return this -> name_of_customer;
 	}
@@ -170,7 +174,6 @@ public:
 	}
 	string* GetPointerToCities(){
 		return this -> citites_list;
-
 	}
 
 	int GetPopulationOfCity(string city){
@@ -185,20 +188,183 @@ class TrancAgency
 
 private:
 	int money = 10000;
+
+	map<string, int> map_cities = {
+		{"Car", 0},
+		{"Train", 1},
+		{"Plane", 2},
+	};
+
+	string InitWeatherConditions(){
+		string possible_weather[4] = {"Good", "OK", "Bad", "Awful"};
+
+		/*generate random num from 0 to 4*/
+		int rand_weather_index = rand() % 5;
+		string weather = possible_weather[rand_weather_index];
+		return weather;
+	}
+
+	bool ProcessAccident(int coefficient_of_accident_included){
+		int random_value = rand() % 100;
+
+		if (random_value > coefficient_of_accident_included){
+			return true;
+		} else{
+			return false;
+		}
+
+	}
+
+	bool InitAccident(string type_of_transport, string weather){
+		int middle_chance = 50;
+		int coefficient_of_accident_included;
+
+		if (type_of_transport == "Car"){
+			if (weather == "Good"){
+				/*chance of accident is 19 %*/
+				/* 50 * 1.6 = 80*/
+				/* 99 - 80 = 19 */
+				coefficient_of_accident_included = (middle_chance * 1.6);
+			} else if (weather == "OK") {
+				/*chance of accident is 29 %*/
+				coefficient_of_accident_included = (middle_chance * 1.4);
+			} else if (weather == "Bad"){
+				/*chance of accident is 54 %*/
+				coefficient_of_accident_included = (middle_chance * 0.9);
+			} else{
+				/*chance of accident is 69 %*/
+				coefficient_of_accident_included = (middle_chance * 0.6);
+			}
+
+			bool accident = ProcessAccident(coefficient_of_accident_included);
+
+			if (accident){
+				return true;
+			} else{
+				return false;
+			}
+
+		} else if (type_of_transport == "Train"){
+			if (weather == "Good"){
+				/*chance of accident is 14 %*/
+				coefficient_of_accident_included = (middle_chance * 1.7);
+			} else if (weather == "OK") {
+				/*chance of accident is 19 %*/
+				coefficient_of_accident_included = (middle_chance * 1.6);
+			} else if (weather == "Bad"){
+				/*chance of accident is 34 %*/
+				coefficient_of_accident_included = (middle_chance * 1.3);
+			} else{
+				/*chance of accident is 69 %*/
+				coefficient_of_accident_included = (middle_chance * 0.6);
+			}
+
+			bool accident = ProcessAccident(coefficient_of_accident_included);
+
+			if (accident){
+				return true;
+			} else{
+				return false;
+			}
+
+		} else{
+			if (weather == "Good"){
+				/*chance of accident is 4 %*/
+				coefficient_of_accident_included = (middle_chance * 1.9);
+			} else if (weather == "OK") {
+				/*chance of accident is 14 %*/
+				coefficient_of_accident_included = (middle_chance * 1.7);
+			} else if (weather == "Bad"){
+				/*chance of accident is 34 %*/
+				coefficient_of_accident_included = (middle_chance * 1.3);
+			} else{
+				/*chance of accident is 79 %*/
+				coefficient_of_accident_included = (middle_chance * 0.4);
+			}
+
+			bool accident = ProcessAccident(coefficient_of_accident_included);
+
+			if (accident){
+				return true;
+			} else{
+				return false;
+			}
+
+		}
+
+	}
+
+	void SumUp(int compensation, Order order_obj){
+		int award = order_obj.GetRandomAward();
+
+		if (compensation){
+			award = 0;
+			this -> money = this ->money - compensation;
+			cout << "Income: " << "-" << compensation;
+		}
+		cout << "Total money of the agency: " << this -> money << endl;
+
+	}
 public:
 	TrancAgency(){
 		cout << "New Tranc Agency was created!" << endl;
 		sleep(2);
 	};
+	~TrancAgency(){};
+
 	void AcceptOrder(Order some_order){
     	cout << "The Order from " << some_order.GetNameOfCustomer()
     	<<" was accepted!" << endl;
 
-    	cout << "Delivery is underway..." << endl;
+    	this -> Delevering(some_order);
+	}
+	int Delevering(Order some_order){
+		string transport_for_order = some_order.GetNameOfTransport();
+		string point_a = some_order.GetPointA();
+		int point_a_int = map_cities[transport_for_order];
 
-    	/* Sleep for 5 seconds */
-		sleep(5);
+		/* {"Car", 0},
+		   {"Train", 1},
+		   {"Plane", 2} */
+		switch(point_a_int){
+			case 0:
+				cout << "Car is moving from " << point_a <<
+				"..." << endl;
+				break;
+			case 1:
+				cout << "Train is moving from " << point_a << endl;
+				break;
+			case 2:
+				cout << "Plane" << endl;
+				break;
+		}
+
+		string weather = InitWeatherConditions();
+
+		cout << "Weather is " << weather << endl;
+
+		bool is_accident = InitAccident(transport_for_order, weather);
+		int compensation = 0;
+
+		if (is_accident == 1){
+			cout << "There's an accident on the way of delevering!" << endl;
+			sleep(3);
+			if (transport_for_order == "Car"){
+				compensation = 10000;
+			} else if (transport_for_order == "Train"){
+				compensation = 50000;
+			} else{
+				compensation = 80000;
+			}
+		}
+		cout << "Continue delevering..." << endl;
+		sleep(2);
     	cout << "Delivered!" << endl;
+
+    	/* Sleep for 5 seconds 
+		sleep(5);*/
+		this -> SumUp(compensation, some_order);
+		return 0;
 	}
 };
 
@@ -206,7 +372,7 @@ public:
 /* Code driver */
 int main()
 {
-	srand (time(NULL)); //initialize the random seed
+	srand(time(NULL)); //initialize the random seed
 
 	TrancAgency new_trans_agency;
 
@@ -216,13 +382,14 @@ int main()
 		string get = *(first_customer.GetPointerToCities() + i);
 		cout << get;
 	}*/
-	
-
-	while (main_loop) {
-		Order first_customer;
-		first_customer.GetInfoAboutOrder();
+	int id = 0;
+	while (1) {
+		/*Getting memory adress of the obj*/
+		Order *first_customer = new Order(id);
+		(*first_customer).GetInfoAboutOrder();
+		new_trans_agency.AcceptOrder(*first_customer);
+		delete first_customer;
+		id++;
 	}
-
-	return 0;
 		
 }
